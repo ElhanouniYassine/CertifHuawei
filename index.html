@@ -61,8 +61,8 @@
       margin: 5% auto;
       padding: 30px;
       border-radius: 12px;
-      width: 80%;
-      max-width: 900px;
+      width: 90%;
+      max-width: 1000px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
       transform: scale(0.9);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -166,6 +166,59 @@
     .highlight-card:hover::before {
       left: 100%;
     }
+    
+    .pdf-container {
+      height: 70vh;
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    
+    .pdf-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .pdf-viewer {
+      width: 100%;
+      height: calc(100% - 3rem);
+      overflow: auto;
+    }
+    
+    .pdf-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .pdf-control-btn {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s;
+    }
+    
+    .pdf-control-btn:hover {
+      background-color: #e5e7eb;
+    }
+    
+    .pdf-page-info {
+      font-size: 0.875rem;
+      color: #4b5563;
+    }
+    
+    .pdf-zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   </style>
 </head>
 <body class="bg-light text-secondary min-h-screen bg-pattern">
@@ -232,7 +285,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Certificate 1 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert1">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert1" data-pdf="certificate1.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -242,7 +295,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">January 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -252,7 +305,7 @@
         </div>
         
         <!-- Certificate 2 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert2">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert2" data-pdf="certificate2.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -262,7 +315,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">March 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -272,7 +325,7 @@
         </div>
         
         <!-- Certificate 3 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert3">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert3" data-pdf="certificate3.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -282,7 +335,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">May 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -304,7 +357,7 @@
       <!-- Hidden Certificates (shown when "View More" is clicked) -->
       <div id="more-certificates" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Certificate 4 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert4">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert4" data-pdf="certificate4.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -314,7 +367,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">August 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -324,7 +377,7 @@
         </div>
         
         <!-- Certificate 5 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert5">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert5" data-pdf="certificate5.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -334,7 +387,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">October 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -344,7 +397,7 @@
         </div>
         
         <!-- Certificate 6 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert6">
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert6" data-pdf="certificate6.pdf">
           <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
             <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
           </div>
@@ -354,7 +407,7 @@
             <div class="flex items-center justify-between mt-4">
               <span class="text-sm text-gray-500 font-medium">December 2023</span>
               <span class="text-primary font-medium flex items-center">
-                View Details
+                View Certificate
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
@@ -461,6 +514,8 @@
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
+              </span>  stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
               </span>
             </div>
           </div>
@@ -535,9 +590,50 @@
         <h3 class="text-2xl font-bold">Deep Learning Specialization</h3>
         <span class="close-modal text-3xl cursor-pointer hover:text-primary transition">&times;</span>
       </div>
-      <div class="mb-8">
-        <img src="certif.png" alt="Certificate" class="w-full h-auto rounded-lg shadow-lg mb-4" />
+      
+      <!-- PDF Viewer -->
+      <div class="pdf-container mb-6">
+        <div class="pdf-toolbar">
+          <div class="pdf-controls">
+            <button class="pdf-control-btn prev-page" title="Previous Page">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <span class="pdf-page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
+            <button class="pdf-control-btn next-page" title="Next Page">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="pdf-zoom-controls">
+            <button class="pdf-control-btn zoom-out" title="Zoom Out">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+              </svg>
+            </button>
+            <span class="zoom-level">100%</span>
+            <button class="pdf-control-btn zoom-in" title="Zoom In">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="pdf-viewer">
+          <!-- PDF will be embedded here -->
+          <object data="certif.png" type="application/pdf" width="100%" height="100%" class="pdf-object">
+            <div class="flex flex-col items-center justify-center h-full bg-gray-100 p-8">
+              <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-gray-600 text-center">PDF preview not available. <a href="certif.png" class="text-primary hover:underline" download>Download certificate</a> to view.</p>
+            </div>
+          </object>
+        </div>
       </div>
+      
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <h4 class="text-lg font-semibold mb-3 flex items-center">
@@ -569,19 +665,8 @@
           </ul>
         </div>
       </div>
-      <div class="mt-8 pt-6 border-t border-gray-200">
-        <h4 class="text-lg font-semibold mb-3 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Description
-        </h4>
-        <p class="text-gray-700 leading-relaxed">
-          The Deep Learning Specialization is a foundational program that helps you understand the capabilities, challenges, and consequences of deep learning and prepare you to participate in the development of leading-edge AI technology. In this Specialization, you build and train neural network architectures such as Convolutional Neural Networks, Recurrent Neural Networks, LSTMs, Transformers, and learn how to make them better with strategies such as Dropout, BatchNorm, Xavier/He initialization, and more.
-        </p>
-      </div>
       <div class="mt-8 flex justify-end">
-        <a href="#" class="bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">Verify Certificate</a>
+        <a href="#" class="bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">Download Certificate</a>
       </div>
     </div>
   </div>
@@ -772,18 +857,27 @@
     const modals = document.querySelectorAll('.modal');
     const closeButtons = document.querySelectorAll('.close-modal');
     
-    // Open modal when clicking on a card
+    // Open modal when clicking on a certificate card
     certificateCards.forEach(card => {
       card.addEventListener('click', () => {
         const modalId = ${card.getAttribute('data-id')}-modal;
         const modal = document.getElementById(modalId);
+        const pdfUrl = card.getAttribute('data-pdf');
+        
         if (modal) {
+          // Update the PDF object source
+          const pdfObject = modal.querySelector('.pdf-object');
+          if (pdfObject && pdfUrl) {
+            pdfObject.setAttribute('data', pdfUrl);
+          }
+          
           modal.classList.add('show');
           document.body.style.overflow = 'hidden';
         }
       });
     });
     
+    // Open modal when clicking on a project card
     projectCards.forEach(card => {
       card.addEventListener('click', () => {
         const modalId = ${card.getAttribute('data-id')}-modal;
@@ -824,6 +918,62 @@
           }
         });
       }
+    });
+    
+    // PDF viewer controls (simplified simulation)
+    document.querySelectorAll('.prev-page').forEach(button => {
+      button.addEventListener('click', function() {
+        const modal = this.closest('.modal');
+        const currentPageEl = modal.querySelector('.current-page');
+        let currentPage = parseInt(currentPageEl.textContent);
+        if (currentPage > 1) {
+          currentPage--;
+          currentPageEl.textContent = currentPage;
+        }
+      });
+    });
+    
+    document.querySelectorAll('.next-page').forEach(button => {
+      button.addEventListener('click', function() {
+        const modal = this.closest('.modal');
+        const currentPageEl = modal.querySelector('.current-page');
+        const totalPagesEl = modal.querySelector('.total-pages');
+        let currentPage = parseInt(currentPageEl.textContent);
+        let totalPages = parseInt(totalPagesEl.textContent);
+        if (currentPage < totalPages) {
+          currentPage++;
+          currentPageEl.textContent = currentPage;
+        }
+      });
+    });
+    
+    // Zoom controls
+    document.querySelectorAll('.zoom-in').forEach(button => {
+      button.addEventListener('click', function() {
+        const modal = this.closest('.modal');
+        const zoomLevelEl = modal.querySelector('.zoom-level');
+        const pdfObject = modal.querySelector('.pdf-object');
+        let zoomLevel = parseInt(zoomLevelEl.textContent);
+        if (zoomLevel < 200) {
+          zoomLevel += 25;
+          zoomLevelEl.textContent = zoomLevel + '%';
+          // In a real implementation, you would apply zoom to the PDF viewer
+        }
+      });
+    });
+    
+    document.querySelectorAll('.zoom-out').forEach(button => {
+      button.addEventListener('click', function() {
+        const modal = this.closest('.modal');
+        const zoomLevelEl = modal.querySelector('.zoom-level');
+        const pdfObject = modal.querySelector('.pdf-object');
+        let zoomLevel = parseInt(zoomLevelEl.textContent);
+        if (zoomLevel > 50) {
+          zoomLevel -= 25;
+          zoomLevelEl.textContent = zoomLevel + '%';
+          // In a real implementation, you would apply zoom to the PDF viewer
+        }
+      });
     });
   </script>
 </body>
