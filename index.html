@@ -6,6 +6,12 @@
   <title>Smart Student Portfolio</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PDF.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script>
+    // Set the PDF.js worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+  </script>
   <script>
     tailwind.config = {
       theme: {
@@ -167,12 +173,15 @@
       left: 100%;
     }
     
+    /* PDF Viewer Styles */
     .pdf-container {
       height: 70vh;
       width: 100%;
       border: 1px solid #e5e7eb;
       border-radius: 0.5rem;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     
     .pdf-toolbar {
@@ -188,6 +197,11 @@
       width: 100%;
       height: calc(100% - 3rem);
       overflow: auto;
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1rem;
     }
     
     .pdf-controls {
@@ -203,21 +217,62 @@
       padding: 0.25rem;
       border-radius: 0.25rem;
       transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .pdf-control-btn:hover {
       background-color: #e5e7eb;
     }
     
+    .pdf-control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
     .pdf-page-info {
       font-size: 0.875rem;
       color: #4b5563;
+      min-width: 100px;
+      text-align: center;
     }
     
     .pdf-zoom-controls {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+    
+    .pdf-canvas-container {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      transition: transform 0.2s;
+    }
+    
+    .pdf-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      color: #6b7280;
+    }
+    
+    .pdf-loading-spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #FFD700;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -283,66 +338,9 @@
         </p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Certificate 1 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert1" data-pdf="certificate1.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">Deep Learning Specialization</h3>
-            <p class="text-gray-600 mb-4">Coursera | deeplearning.ai</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">January 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Certificate 2 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert2" data-pdf="certificate2.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">Machine Learning Engineer</h3>
-            <p class="text-gray-600 mb-4">Udacity</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">March 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Certificate 3 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert3" data-pdf="certificate3.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">TensorFlow Developer</h3>
-            <p class="text-gray-600 mb-4">Google</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">May 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
+      <!-- Certificate cards will be dynamically generated here -->
+      <div id="certificates-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Certificates will be inserted here by JavaScript -->
       </div>
       
       <div class="text-center mt-12">
@@ -355,66 +353,8 @@
       </div>
       
       <!-- Hidden Certificates (shown when "View More" is clicked) -->
-      <div id="more-certificates" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Certificate 4 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert4" data-pdf="certificate4.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">AI for Medicine</h3>
-            <p class="text-gray-600 mb-4">Coursera | deeplearning.ai</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">August 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Certificate 5 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert5" data-pdf="certificate5.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">Full Stack Development</h3>
-            <p class="text-gray-600 mb-4">Udemy</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">October 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Certificate 6 -->
-        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert6" data-pdf="certificate6.pdf">
-          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
-            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-semibold mb-2">Cloud Computing</h3>
-            <p class="text-gray-600 mb-4">AWS</p>
-            <div class="flex items-center justify-between mt-4">
-              <span class="text-sm text-gray-500 font-medium">December 2023</span>
-              <span class="text-primary font-medium flex items-center">
-                View Certificate
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </div>
-          </div>
-        </div>
+      <div id="more-certificates-container" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- More certificates will be inserted here by JavaScript -->
       </div>
     </div>
   </section>
@@ -514,8 +454,6 @@
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
-              </span>  stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
               </span>
             </div>
           </div>
@@ -582,12 +520,11 @@
     </div>
   </section>
 
-  <!-- Certificate Modals -->
-  <!-- Certificate 1 Modal -->
-  <div id="cert1-modal" class="modal">
+  <!-- Certificate Modal Template -->
+  <div id="certificate-modal-template" class="modal" style="display: none;">
     <div class="modal-content">
       <div class="flex justify-between items-start mb-6">
-        <h3 class="text-2xl font-bold">Deep Learning Specialization</h3>
+        <h3 class="text-2xl font-bold certificate-title">Certificate Title</h3>
         <span class="close-modal text-3xl cursor-pointer hover:text-primary transition">&times;</span>
       </div>
       
@@ -595,13 +532,13 @@
       <div class="pdf-container mb-6">
         <div class="pdf-toolbar">
           <div class="pdf-controls">
-            <button class="pdf-control-btn prev-page" title="Previous Page">
+            <button class="pdf-control-btn prev-page" title="Previous Page" disabled>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
               </svg>
             </button>
             <span class="pdf-page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
-            <button class="pdf-control-btn next-page" title="Next Page">
+            <button class="pdf-control-btn next-page" title="Next Page" disabled>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
               </svg>
@@ -622,15 +559,13 @@
           </div>
         </div>
         <div class="pdf-viewer">
-          <!-- PDF will be embedded here -->
-          <object data="certif.png" type="application/pdf" width="100%" height="100%" class="pdf-object">
-            <div class="flex flex-col items-center justify-center h-full bg-gray-100 p-8">
-              <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              <p class="text-gray-600 text-center">PDF preview not available. <a href="certif.png" class="text-primary hover:underline" download>Download certificate</a> to view.</p>
-            </div>
-          </object>
+          <div class="pdf-loading">
+            <div class="pdf-loading-spinner"></div>
+            <p>Loading PDF...</p>
+          </div>
+          <div class="pdf-canvas-container" style="display: none;">
+            <canvas id="pdf-canvas"></canvas>
+          </div>
         </div>
       </div>
       
@@ -642,11 +577,8 @@
             </svg>
             Certificate Details
           </h4>
-          <div class="space-y-2 text-gray-700">
-            <p><span class="font-medium">Issuer:</span> Coursera | deeplearning.ai</p>
-            <p><span class="font-medium">Date Issued:</span> January 2023</p>
-            <p><span class="font-medium">Credential ID:</span> DLSP-2023-01-XYZ</p>
-            <p><span class="font-medium">Expiration:</span> No Expiration</p>
+          <div class="space-y-2 text-gray-700 certificate-details">
+            <!-- Certificate details will be inserted here -->
           </div>
         </div>
         <div>
@@ -656,17 +588,13 @@
             </svg>
             Skills Acquired
           </h4>
-          <ul class="list-disc pl-5 text-gray-700 space-y-1">
-            <li>Neural Networks and Deep Learning</li>
-            <li>Improving Deep Neural Networks</li>
-            <li>Structuring Machine Learning Projects</li>
-            <li>Convolutional Neural Networks</li>
-            <li>Sequence Models</li>
+          <ul class="list-disc pl-5 text-gray-700 space-y-1 certificate-skills">
+            <!-- Skills will be inserted here -->
           </ul>
         </div>
       </div>
       <div class="mt-8 flex justify-end">
-        <a href="#" class="bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">Download Certificate</a>
+        <a href="#" class="download-certificate bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">Download Certificate</a>
       </div>
     </div>
   </div>
@@ -782,6 +710,193 @@
   </button>
 
   <script>
+    // Certificate data - EDIT THIS SECTION with your own certificates
+    const certificatesData = [
+      {
+        id: "cert1",
+        title: "Deep Learning Specialization",
+        issuer: "Coursera | deeplearning.ai",
+        date: "January 2023",
+        credentialId: "DLSP-2023-01-XYZ",
+        expiration: "No Expiration",
+        skills: [
+          "Neural Networks and Deep Learning",
+          "Improving Deep Neural Networks",
+          "Structuring Machine Learning Projects",
+          "Convolutional Neural Networks",
+          "Sequence Models"
+        ],
+        imagePath: "/path/to/your/certificate-images/deep-learning.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/deep-learning.pdf" // Replace with your local PDF path
+      },
+      {
+        id: "cert2",
+        title: "Machine Learning Engineer",
+        issuer: "Udacity",
+        date: "March 2023",
+        credentialId: "MLE-2023-03-ABC",
+        expiration: "No Expiration",
+        skills: [
+          "Machine Learning Algorithms",
+          "Data Engineering",
+          "Model Deployment",
+          "Software Engineering",
+          "MLOps"
+        ],
+        imagePath: "/path/to/your/certificate-images/machine-learning.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/machine-learning.pdf" // Replace with your local PDF path
+      },
+      {
+        id: "cert3",
+        title: "TensorFlow Developer",
+        issuer: "Google",
+        date: "May 2023",
+        credentialId: "TFD-2023-05-DEF",
+        expiration: "May 2026",
+        skills: [
+          "TensorFlow Framework",
+          "Neural Network Design",
+          "Computer Vision",
+          "Natural Language Processing",
+          "Model Optimization"
+        ],
+        imagePath: "/path/to/your/certificate-images/tensorflow.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/tensorflow.pdf" // Replace with your local PDF path
+      },
+      {
+        id: "cert4",
+        title: "AI for Medicine",
+        issuer: "Coursera | deeplearning.ai",
+        date: "August 2023",
+        credentialId: "AIM-2023-08-GHI",
+        expiration: "No Expiration",
+        skills: [
+          "Medical Image Analysis",
+          "Clinical Data Processing",
+          "Treatment Effect Estimation",
+          "Risk Models",
+          "Medical Prognosis"
+        ],
+        imagePath: "/path/to/your/certificate-images/ai-medicine.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/ai-medicine.pdf" // Replace with your local PDF path
+      },
+      {
+        id: "cert5",
+        title: "Full Stack Development",
+        issuer: "Udemy",
+        date: "October 2023",
+        credentialId: "FSD-2023-10-JKL",
+        expiration: "No Expiration",
+        skills: [
+          "Frontend Development (React)",
+          "Backend Development (Node.js)",
+          "Database Design",
+          "RESTful API Development",
+          "Authentication & Authorization"
+        ],
+        imagePath: "/path/to/your/certificate-images/fullstack.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/fullstack.pdf" // Replace with your local PDF path
+      },
+      {
+        id: "cert6",
+        title: "Cloud Computing",
+        issuer: "AWS",
+        date: "December 2023",
+        credentialId: "AWS-2023-12-MNO",
+        expiration: "December 2026",
+        skills: [
+          "AWS Services",
+          "Cloud Architecture",
+          "Serverless Computing",
+          "Infrastructure as Code",
+          "Cloud Security"
+        ],
+        imagePath: "/path/to/your/certificate-images/cloud.jpg", // Replace with your local image path
+        pdfPath: "/path/to/your/certificate-pdfs/cloud.pdf" // Replace with your local PDF path
+      }
+    ];
+
+    // Function to create certificate cards
+    function createCertificateCard(certificate) {
+      return `
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="${certificate.id}" data-pdf="${certificate.pdfPath}">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="${certificate.imagePath}" alt="${certificate.title}" class="h-full w-full object-contain" onerror="this.src='certif.png'; this.onerror=null;" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">${certificate.title}</h3>
+            <p class="text-gray-600 mb-4">${certificate.issuer}</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">${certificate.date}</span>
+              <span class="text-primary font-medium flex items-center">
+                View Certificate
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Function to create certificate modal
+    function createCertificateModal(certificate) {
+      // Clone the template
+      const modalTemplate = document.getElementById('certificate-modal-template');
+      const modal = modalTemplate.cloneNode(true);
+      modal.id = ${certificate.id}-modal;
+      modal.style.display = 'none';
+      
+      // Update modal content
+      modal.querySelector('.certificate-title').textContent = certificate.title;
+      
+      // Update certificate details
+      const detailsContainer = modal.querySelector('.certificate-details');
+      detailsContainer.innerHTML = `
+        <p><span class="font-medium">Issuer:</span> ${certificate.issuer}</p>
+        <p><span class="font-medium">Date Issued:</span> ${certificate.date}</p>
+        <p><span class="font-medium">Credential ID:</span> ${certificate.credentialId}</p>
+        <p><span class="font-medium">Expiration:</span> ${certificate.expiration}</p>
+      `;
+      
+      // Update skills
+      const skillsContainer = modal.querySelector('.certificate-skills');
+      skillsContainer.innerHTML = certificate.skills.map(skill => <li>${skill}</li>).join('');
+      
+      // Update download button
+      const downloadBtn = modal.querySelector('.download-certificate');
+      downloadBtn.href = certificate.pdfPath;
+      downloadBtn.setAttribute('download', certificate.pdfPath.split('/').pop());
+      
+      return modal;
+    }
+
+    // Initialize certificates
+    document.addEventListener('DOMContentLoaded', function() {
+      const certificatesContainer = document.getElementById('certificates-container');
+      const moreCertificatesContainer = document.getElementById('more-certificates-container');
+      
+      // Display first 3 certificates
+      certificatesData.slice(0, 3).forEach(certificate => {
+        certificatesContainer.innerHTML += createCertificateCard(certificate);
+      });
+      
+      // Display remaining certificates in the "more" section
+      certificatesData.slice(3).forEach(certificate => {
+        moreCertificatesContainer.innerHTML += createCertificateCard(certificate);
+      });
+      
+      // Create modals for all certificates
+      certificatesData.forEach(certificate => {
+        const modal = createCertificateModal(certificate);
+        document.body.appendChild(modal);
+      });
+      
+      // Initialize certificate card click handlers
+      initCertificateCardHandlers();
+    });
+
     // Navigation active state
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -837,7 +952,7 @@
     
     // View More Certificates button
     document.getElementById('view-more-certs').addEventListener('click', function() {
-      const moreCertificates = document.getElementById('more-certificates');
+      const moreCertificates = document.getElementById('more-certificates-container');
       const button = this;
       
       if (moreCertificates.classList.contains('hidden')) {
@@ -851,129 +966,215 @@
       }
     });
     
-    // Modal functionality
-    const certificateCards = document.querySelectorAll('.certificate-card');
-    const projectCards = document.querySelectorAll('.project-card');
-    const modals = document.querySelectorAll('.modal');
-    const closeButtons = document.querySelectorAll('.close-modal');
+    // PDF.js functionality
+    let pdfDoc = null;
+    let pageNum = 1;
+    let pageRendering = false;
+    let pageNumPending = null;
+    let scale = 1.0;
+    let canvas = null;
+    let ctx = null;
+    let currentPdfUrl = null;
     
-    // Open modal when clicking on a certificate card
-    certificateCards.forEach(card => {
-      card.addEventListener('click', () => {
-        const modalId = ${card.getAttribute('data-id')}-modal;
-        const modal = document.getElementById(modalId);
-        const pdfUrl = card.getAttribute('data-pdf');
+    function renderPage(num) {
+      pageRendering = true;
+      
+      // Update UI
+      document.querySelector('.current-page').textContent = num;
+      document.querySelector('.prev-page').disabled = num <= 1;
+      document.querySelector('.next-page').disabled = num >= pdfDoc.numPages;
+      
+      // Using promise to fetch the page
+      pdfDoc.getPage(num).then(function(page) {
+        const viewport = page.getViewport({ scale: scale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
         
-        if (modal) {
-          // Update the PDF object source
-          const pdfObject = modal.querySelector('.pdf-object');
-          if (pdfObject && pdfUrl) {
-            pdfObject.setAttribute('data', pdfUrl);
-          }
+        // Render PDF page into canvas context
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        
+        const renderTask = page.render(renderContext);
+        
+        // Wait for rendering to finish
+        renderTask.promise.then(function() {
+          pageRendering = false;
           
-          modal.classList.add('show');
-          document.body.style.overflow = 'hidden';
-        }
+          // Show the canvas container and hide loading indicator
+          document.querySelector('.pdf-canvas-container').style.display = 'block';
+          document.querySelector('.pdf-loading').style.display = 'none';
+          
+          // If another page rendering is pending, render that page
+          if (pageNumPending !== null) {
+            renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+        });
       });
-    });
+    }
     
-    // Open modal when clicking on a project card
-    projectCards.forEach(card => {
-      card.addEventListener('click', () => {
-        const modalId = ${card.getAttribute('data-id')}-modal;
-        const modal = document.getElementById(modalId);
-        if (modal) {
-          modal.classList.add('show');
-          document.body.style.overflow = 'hidden';
-        }
+    function queueRenderPage(num) {
+      if (pageRendering) {
+        pageNumPending = num;
+      } else {
+        renderPage(num);
+      }
+    }
+    
+    function onPrevPage() {
+      if (pageNum <= 1) {
+        return;
+      }
+      pageNum--;
+      queueRenderPage(pageNum);
+    }
+    
+    function onNextPage() {
+      if (pageNum >= pdfDoc.numPages) {
+        return;
+      }
+      pageNum++;
+      queueRenderPage(pageNum);
+    }
+    
+    function zoomIn() {
+      scale += 0.25;
+      document.querySelector('.zoom-level').textContent = ${Math.round(scale * 100)}%;
+      queueRenderPage(pageNum);
+    }
+    
+    function zoomOut() {
+      if (scale <= 0.5) return;
+      scale -= 0.25;
+      document.querySelector('.zoom-level').textContent = ${Math.round(scale * 100)}%;
+      queueRenderPage(pageNum);
+    }
+    
+    function loadPDF(url) {
+      // Show loading indicator
+      document.querySelector('.pdf-canvas-container').style.display = 'none';
+      document.querySelector('.pdf-loading').style.display = 'flex';
+      
+      // Reset zoom level
+      scale = 1.0;
+      document.querySelector('.zoom-level').textContent = '100%';
+      
+      // Get canvas and context
+      canvas = document.getElementById('pdf-canvas');
+      ctx = canvas.getContext('2d');
+      
+      // Asynchronously download PDF
+      pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        document.querySelector('.total-pages').textContent = pdfDoc.numPages;
+        
+        // Initial/first page rendering
+        pageNum = 1;
+        renderPage(pageNum);
+      }).catch(function(error) {
+        // Display error
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'p-4 bg-red-50 text-red-600 rounded-md';
+        errorMessage.innerHTML = `
+          <p class="font-medium">Error loading PDF</p>
+          <p class="text-sm mt-1">Please check the file path and try again or download the certificate to view it.</p>
+        `;
+        document.querySelector('.pdf-loading').innerHTML = '';
+        document.querySelector('.pdf-loading').appendChild(errorMessage);
       });
-    });
+    }
     
-    // Close modal when clicking on close button
-    closeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const modal = button.closest('.modal');
-        modal.classList.remove('show');
-        document.body.style.overflow = 'auto';
+    // Function to initialize certificate card click handlers
+    function initCertificateCardHandlers() {
+      const certificateCards = document.querySelectorAll('.certificate-card');
+      const projectCards = document.querySelectorAll('.project-card');
+      const modals = document.querySelectorAll('.modal');
+      const closeButtons = document.querySelectorAll('.close-modal');
+      
+      // Open modal when clicking on a certificate card
+      certificateCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const modalId = ${card.getAttribute('data-id')}-modal;
+          const modal = document.getElementById(modalId);
+          const pdfUrl = card.getAttribute('data-pdf');
+          
+          if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            // Load PDF if URL is provided and different from current
+            if (pdfUrl && pdfUrl !== currentPdfUrl) {
+              currentPdfUrl = pdfUrl;
+              loadPDF(pdfUrl);
+              
+              // Update download button
+              const downloadBtn = modal.querySelector('.download-certificate');
+              if (downloadBtn) {
+                downloadBtn.href = pdfUrl;
+                downloadBtn.setAttribute('download', pdfUrl.split('/').pop());
+              }
+            }
+          }
+        });
       });
-    });
-    
-    // Close modal when clicking outside of modal content
-    window.addEventListener('click', (event) => {
-      modals.forEach(modal => {
-        if (event.target === modal) {
+      
+      // Open modal when clicking on a project card
+      projectCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const modalId = ${card.getAttribute('data-id')}-modal;
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+          }
+        });
+      });
+      
+      // Close modal when clicking on close button
+      closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const modal = button.closest('.modal');
           modal.classList.remove('show');
           document.body.style.overflow = 'auto';
-        }
+        });
       });
-    });
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+      
+      // Close modal when clicking outside of modal content
+      window.addEventListener('click', (event) => {
         modals.forEach(modal => {
-          if (modal.classList.contains('show')) {
+          if (event.target === modal) {
             modal.classList.remove('show');
             document.body.style.overflow = 'auto';
           }
         });
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          modals.forEach(modal => {
+            if (modal.classList.contains('show')) {
+              modal.classList.remove('show');
+              document.body.style.overflow = 'auto';
+            }
+          });
+        }
+      });
+    }
+    
+    // PDF navigation controls
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.prev-page')) {
+        onPrevPage();
+      } else if (e.target.closest('.next-page')) {
+        onNextPage();
+      } else if (e.target.closest('.zoom-in')) {
+        zoomIn();
+      } else if (e.target.closest('.zoom-out')) {
+        zoomOut();
       }
-    });
-    
-    // PDF viewer controls (simplified simulation)
-    document.querySelectorAll('.prev-page').forEach(button => {
-      button.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        const currentPageEl = modal.querySelector('.current-page');
-        let currentPage = parseInt(currentPageEl.textContent);
-        if (currentPage > 1) {
-          currentPage--;
-          currentPageEl.textContent = currentPage;
-        }
-      });
-    });
-    
-    document.querySelectorAll('.next-page').forEach(button => {
-      button.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        const currentPageEl = modal.querySelector('.current-page');
-        const totalPagesEl = modal.querySelector('.total-pages');
-        let currentPage = parseInt(currentPageEl.textContent);
-        let totalPages = parseInt(totalPagesEl.textContent);
-        if (currentPage < totalPages) {
-          currentPage++;
-          currentPageEl.textContent = currentPage;
-        }
-      });
-    });
-    
-    // Zoom controls
-    document.querySelectorAll('.zoom-in').forEach(button => {
-      button.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        const zoomLevelEl = modal.querySelector('.zoom-level');
-        const pdfObject = modal.querySelector('.pdf-object');
-        let zoomLevel = parseInt(zoomLevelEl.textContent);
-        if (zoomLevel < 200) {
-          zoomLevel += 25;
-          zoomLevelEl.textContent = zoomLevel + '%';
-          // In a real implementation, you would apply zoom to the PDF viewer
-        }
-      });
-    });
-    
-    document.querySelectorAll('.zoom-out').forEach(button => {
-      button.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        const zoomLevelEl = modal.querySelector('.zoom-level');
-        const pdfObject = modal.querySelector('.pdf-object');
-        let zoomLevel = parseInt(zoomLevelEl.textContent);
-        if (zoomLevel > 50) {
-          zoomLevel -= 25;
-          zoomLevelEl.textContent = zoomLevel + '%';
-          // In a real implementation, you would apply zoom to the PDF viewer
-        }
-      });
     });
   </script>
 </body>
