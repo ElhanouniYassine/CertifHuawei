@@ -62,7 +62,11 @@
       transition: opacity 0.3s ease;
     }
     
-    .modal-content {
+    .modal.show {
+      opacity: 1;
+    }
+    
+    .modal .modal-content {
       background-color: #fff;
       margin: 5% auto;
       padding: 30px;
@@ -72,11 +76,6 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
       transform: scale(0.9);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    .modal.show {
-      display: block;
-      opacity: 1;
     }
     
     .modal.show .modal-content {
@@ -303,7 +302,7 @@
         </div>
       </div>
       <h1 class="text-5xl md:text-7xl font-bold mb-6 text-center leading-tight">
-        <span class="text-secondary">Yassine</span> 
+        <span class="text-secondary">Professional</span> 
         <span class="text-primary">Portfolio</span>
       </h1>
       <p class="text-xl md:text-2xl text-gray-700 max-w-2xl text-center mb-10 leading-relaxed">
@@ -893,7 +892,6 @@
     });
     
     // PDF.js functionality
-
     function renderPage(num, modal) {
       pageRendering = true;
       
@@ -936,17 +934,13 @@
     }
     
     function onPrevPage() {
-      if (pageNum <= 1) {
-        return;
-      }
+      if (pageNum <= 1) return;
       pageNum--;
       queueRenderPage(pageNum, currentModal);
     }
     
     function onNextPage() {
-      if (pageNum >= pdfDoc.numPages) {
-        return;
-      }
+      if (pageNum >= pdfDoc.numPages) return;
       pageNum++;
       queueRenderPage(pageNum, currentModal);
     }
@@ -1017,6 +1011,7 @@
           
           if (modal) {
             modal.classList.add('show');
+            modal.style.display = 'block'; // Force visible by updating inline style
             document.body.style.overflow = 'hidden';
             currentModal = modal; // Set the current modal globally
             
@@ -1041,6 +1036,7 @@
           const modal = document.getElementById(modalId);
           if (modal) {
             modal.classList.add('show');
+            modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
           }
         });
@@ -1051,6 +1047,7 @@
         button.addEventListener('click', () => {
           const modal = button.closest('.modal');
           modal.classList.remove('show');
+          modal.style.display = 'none'; // Hide the modal
           document.body.style.overflow = 'auto';
         });
       });
@@ -1060,6 +1057,7 @@
         modals.forEach(modal => {
           if (event.target === modal) {
             modal.classList.remove('show');
+            modal.style.display = 'none';
             document.body.style.overflow = 'auto';
           }
         });
@@ -1071,6 +1069,7 @@
           modals.forEach(modal => {
             if (modal.classList.contains('show')) {
               modal.classList.remove('show');
+              modal.style.display = 'none';
               document.body.style.overflow = 'auto';
             }
           });
