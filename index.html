@@ -893,44 +893,39 @@
     let ctx = null;
     let currentPdfUrl = null;
     
-    function renderPage(num) {
-      pageRendering = true;
+    function renderPage(num, modal) {
+  pageRendering = true;
+  
+  // Update UI within the modal
+  modal.querySelector('.current-page').textContent = num;
+  modal.querySelector('.prev-page').disabled = num <= 1;
+  modal.querySelector('.next-page').disabled = num >= pdfDoc.numPages;
+  
+  pdfDoc.getPage(num).then(function(page) {
+    const viewport = page.getViewport({ scale: scale });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+    
+    const renderTask = page.render(renderContext);
+    
+    renderTask.promise.then(function() {
+      pageRendering = false;
+      modal.querySelector('.pdf-canvas-container').style.display = 'block';
+      modal.querySelector('.pdf-loading').style.display = 'none';
       
-      // Update UI
-      document.querySelector('.current-page').textContent = num;
-      document.querySelector('.prev-page').disabled = num <= 1;
-      document.querySelector('.next-page').disabled = num >= pdfDoc.numPages;
-      
-      // Using promise to fetch the page
-      pdfDoc.getPage(num).then(function(page) {
-        const viewport = page.getViewport({ scale: scale });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        
-        // Render PDF page into canvas context
-        const renderContext = {
-          canvasContext: ctx,
-          viewport: viewport
-        };
-        
-        const renderTask = page.render(renderContext);
-        
-        // Wait for rendering to finish
-        renderTask.promise.then(function() {
-          pageRendering = false;
-          
-          // Show the canvas container and hide loading indicator
-          document.querySelector('.pdf-canvas-container').style.display = 'block';
-          document.querySelector('.pdf-loading').style.display = 'none';
-          
-          // If another page rendering is pending, render that page
-          if (pageNumPending !== null) {
-            renderPage(pageNumPending);
-            pageNumPending = null;
-          }
-        });
-      });
-    }
+      if (pageNumPending !== null) {
+        renderPage(pageNumPending, modal);
+        pageNumPending = null;
+      }
+    });
+  });
+}
+
     
     function queueRenderPage(num) {
       if (pageRendering) {
@@ -969,39 +964,39 @@
       queueRenderPage(pageNum);
     }
     
-    function loadPDF(url) {
-      // Show loading indicator
-      document.querySelector('.pdf-canvas-container').style.display = 'none';
-      document.querySelector('.pdf-loading').style.display = 'flex';
-      
-      // Reset zoom level
-      scale = 1.0;
-      document.querySelector('.zoom-level').textContent = '100%';
-      
-      // Get canvas and context
-      canvas = document.getElementById('pdf-canvas');
-      ctx = canvas.getContext('2d');
-      
-      // Asynchronously download PDF
-      pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
-        pdfDoc = pdfDoc_;
-        document.querySelector('.total-pages').textContent = pdfDoc.numPages;
-        
-        // Initial/first page rendering
-        pageNum = 1;
-        renderPage(pageNum);
-      }).catch(function(error) {
-        // Display error
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'p-4 bg-red-50 text-red-600 rounded-md';
-        errorMessage.innerHTML = `
-          <p class="font-medium">Error loading PDF</p>
-          <p class="text-sm mt-1">Please check the file path and try again or download the certificate to view it.</p>
-        `;
-        document.querySelector('.pdf-loading').innerHTML = '';
-        document.querySelector('.pdf-loading').appendChild(errorMessage);
-      });
-    }
+    function loadPDF(modal, url) {
+  // Use modal.querySelector() to get elements within the opened modal
+  const pdfCanvasContainer = modal.querySelector('.pdf-canvas-container');
+  const pdfLoading = modal.querySelector('.pdf-loading');
+  pdfCanvasContainer.style.display = 'none';
+  pdfLoading.style.display = 'flex';
+
+  // Reset zoom level
+  scale = 1.0;
+  modal.querySelector('.zoom-level').textContent = '100%';
+
+  // Get canvas and its context from the modal
+  canvas = modal.querySelector('#pdf-canvas');
+  ctx = canvas.getContext('2d');
+
+  // Asynchronously load the PDF
+  pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+    pdfDoc = pdfDoc_;
+    modal.querySelector('.total-pages').textContent = pdfDoc.numPages;
+    pageNum = 1;
+    renderPage(pageNum, modal);
+  }).catch(function(error) {
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'p-4 bg-red-50 text-red-600 rounded-md';
+    errorMessage.innerHTML = `
+      <p class="font-medium">Error loading PDF</p>
+      <p class="text-sm mt-1">Please check the file path and try again or download the certificate to view it.</p>
+    `;
+    pdfLoading.innerHTML = '';
+    pdfLoading.appendChild(errorMessage);
+  });
+}
+
     
     // Function to initialize certificate card click handlers
     function initCertificateCardHandlers() {
@@ -1017,23 +1012,23 @@
           const modal = document.getElementById(modalId);
           const pdfUrl = card.getAttribute('data-pdf');
           
-          if (modal) {
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            
-            // Load PDF if URL is provided and different from current
-            if (pdfUrl && pdfUrl !== currentPdfUrl) {
-              currentPdfUrl = pdfUrl;
-              loadPDF(pdfUrl);
-              
-              // Update download button
-              const downloadBtn = modal.querySelector('.download-certificate');
-              if (downloadBtn) {
-                downloadBtn.href = pdfUrl;
-                downloadBtn.setAttribute('download', pdfUrl.split('/').pop());
-              }
-            }
-          }
+          // In the certificate card click handler:
+if (modal) {
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  if (pdfUrl && pdfUrl !== currentPdfUrl) {
+    currentPdfUrl = pdfUrl;
+    loadPDF(modal, pdfUrl); // Pass modal as the first argument
+
+    const downloadBtn = modal.querySelector('.download-certificate');
+    if (downloadBtn) {
+      downloadBtn.href = pdfUrl;
+      downloadBtn.setAttribute('download', pdfUrl.split('/').pop());
+    }
+  }
+}
+
         });
       });
       
