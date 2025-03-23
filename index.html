@@ -761,7 +761,7 @@
       // Clone the template
       const modalTemplate = document.getElementById('certificate-modal-template');
       const modal = modalTemplate.cloneNode(true);
-      modal.id = ${certificate.id}-modal;
+      modal.id = `${certificate.id}-modal`;
       modal.style.display = 'none';
       
       // Update modal content
@@ -965,7 +965,7 @@
     function zoomOut() {
       if (scale <= 0.5) return;
       scale -= 0.25;
-      document.querySelector('.zoom-level').textContent = ${Math.round(scale * 100)}%;
+      document.querySelector('.zoom-level').textContent = `${Math.round(scale * 100)}%`;
       queueRenderPage(pageNum);
     }
     
@@ -1040,7 +1040,8 @@
       // Open modal when clicking on a project card
       projectCards.forEach(card => {
         card.addEventListener('click', () => {
-          const modalId = ${card.getAttribute('data-id')}-modal;
+          const modalId = `${card.getAttribute('data-id')}-modal`;
+
           const modal = document.getElementById(modalId);
           if (modal) {
             modal.classList.add('show');
