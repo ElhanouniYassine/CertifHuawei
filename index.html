@@ -729,91 +729,7 @@
         imagePath: "certif.png", // Replace with your local image path
         pdfPath: "certification.pdf" // Replace with your local PDF path
       },
-      {
-        id: "cert2",
-        title: "Machine Learning Engineer",
-        issuer: "Udacity",
-        date: "March 2023",
-        credentialId: "MLE-2023-03-ABC",
-        expiration: "No Expiration",
-        skills: [
-          "Machine Learning Algorithms",
-          "Data Engineering",
-          "Model Deployment",
-          "Software Engineering",
-          "MLOps"
-        ],
-        imagePath: "/path/to/your/certificate-images/machine-learning.jpg", // Replace with your local image path
-        pdfPath: "/path/to/your/certificate-pdfs/machine-learning.pdf" // Replace with your local PDF path
-      },
-      {
-        id: "cert3",
-        title: "TensorFlow Developer",
-        issuer: "Google",
-        date: "May 2023",
-        credentialId: "TFD-2023-05-DEF",
-        expiration: "May 2026",
-        skills: [
-          "TensorFlow Framework",
-          "Neural Network Design",
-          "Computer Vision",
-          "Natural Language Processing",
-          "Model Optimization"
-        ],
-        imagePath: "/path/to/your/certificate-images/tensorflow.jpg", // Replace with your local image path
-        pdfPath: "/path/to/your/certificate-pdfs/tensorflow.pdf" // Replace with your local PDF path
-      },
-      {
-        id: "cert4",
-        title: "AI for Medicine",
-        issuer: "Coursera | deeplearning.ai",
-        date: "August 2023",
-        credentialId: "AIM-2023-08-GHI",
-        expiration: "No Expiration",
-        skills: [
-          "Medical Image Analysis",
-          "Clinical Data Processing",
-          "Treatment Effect Estimation",
-          "Risk Models",
-          "Medical Prognosis"
-        ],
-        imagePath: "/path/to/your/certificate-images/ai-medicine.jpg", // Replace with your local image path
-        pdfPath: "/path/to/your/certificate-pdfs/ai-medicine.pdf" // Replace with your local PDF path
-      },
-      {
-        id: "cert5",
-        title: "Full Stack Development",
-        issuer: "Udemy",
-        date: "October 2023",
-        credentialId: "FSD-2023-10-JKL",
-        expiration: "No Expiration",
-        skills: [
-          "Frontend Development (React)",
-          "Backend Development (Node.js)",
-          "Database Design",
-          "RESTful API Development",
-          "Authentication & Authorization"
-        ],
-        imagePath: "/path/to/your/certificate-images/fullstack.jpg", // Replace with your local image path
-        pdfPath: "/path/to/your/certificate-pdfs/fullstack.pdf" // Replace with your local PDF path
-      },
-      {
-        id: "cert6",
-        title: "Cloud Computing",
-        issuer: "AWS",
-        date: "December 2023",
-        credentialId: "AWS-2023-12-MNO",
-        expiration: "December 2026",
-        skills: [
-          "AWS Services",
-          "Cloud Architecture",
-          "Serverless Computing",
-          "Infrastructure as Code",
-          "Cloud Security"
-        ],
-        imagePath: "/path/to/your/certificate-images/cloud.jpg", // Replace with your local image path
-        pdfPath: "/path/to/your/certificate-pdfs/cloud.pdf" // Replace with your local PDF path
-      }
+      
     ];
 
     // Function to create certificate cards
@@ -862,7 +778,8 @@
       
       // Update skills
       const skillsContainer = modal.querySelector('.certificate-skills');
-      skillsContainer.innerHTML = certificate.skills.map(skill => <li>${skill}</li>).join('');
+      skillsContainer.innerHTML = certificate.skills.map(skill => `<li>${skill}</li>`).join('');
+
       
       // Update download button
       const downloadBtn = modal.querySelector('.download-certificate');
@@ -1041,7 +958,7 @@
     
     function zoomIn() {
       scale += 0.25;
-      document.querySelector('.zoom-level').textContent = ${Math.round(scale * 100)}%;
+      document.querySelector('.zoom-level').textContent = `${Math.round(scale * 100)}%`;
       queueRenderPage(pageNum);
     }
     
@@ -1096,7 +1013,7 @@
       // Open modal when clicking on a certificate card
       certificateCards.forEach(card => {
         card.addEventListener('click', () => {
-          const modalId = ${card.getAttribute('data-id')}-modal;
+          const modalId = `${card.getAttribute('data-id')}-modal`;
           const modal = document.getElementById(modalId);
           const pdfUrl = card.getAttribute('data-pdf');
           
