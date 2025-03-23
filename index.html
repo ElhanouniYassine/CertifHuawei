@@ -3,19 +3,828 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Certificate</title>
+  <title>Smart Student Portfolio</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FFD700', // Yellow
+            secondary: '#000000', // Black
+            light: '#FFFFFF', // White
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
   <style>
-    /* Centers text and inline elements like <img> */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
     body {
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif; /* optional styling */
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 900px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .modal.show {
+      display: block;
+      opacity: 1;
+    }
+    
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+    
+    .section-heading {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-heading::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 60%;
+      height: 4px;
+      background-color: #FFD700;
+    }
+    
+    .nav-link {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFD700;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    
+    .badge {
+      transition: all 0.2s ease;
+    }
+    
+    .badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .scroll-indicator {
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    .bg-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .highlight-card {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .highlight-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 215, 0, 0.2) 50%,
+        rgba(255, 215, 0, 0) 100%
+      );
+      transition: left 1s ease;
+    }
+    
+    .highlight-card:hover::before {
+      left: 100%;
     }
   </style>
 </head>
-<body>
-  <h1>My Certificate</h1>
-  <img src="certif.png" alt="Certificate" />
+<body class="bg-light text-secondary min-h-screen bg-pattern">
+  <!-- Navigation -->
+  <nav class="bg-secondary text-light fixed w-full z-10 transition-all duration-300" id="navbar">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#home" class="text-xl font-bold flex items-center space-x-2">
+        <span class="text-primary">Portfolio</span>
+        <span class="bg-primary h-1.5 w-1.5 rounded-full inline-block"></span>
+      </a>
+      <div class="flex space-x-8">
+        <a href="#certificates" class="nav-link hover:text-primary transition font-medium">Certificates</a>
+        <a href="#projects" class="nav-link hover:text-primary transition font-medium">Projects & Experience</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen flex items-center justify-center relative">
+    <div class="container mx-auto px-6 py-24 flex flex-col items-center">
+      <div class="w-32 h-32 rounded-full bg-primary p-1 mb-8 shadow-lg">
+        <div class="w-full h-full rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+          <!-- Placeholder avatar -->
+          <svg class="w-24 h-24 text-light" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-5xl md:text-7xl font-bold mb-6 text-center leading-tight">
+        <span class="text-secondary">Professional</span> 
+        <span class="text-primary">Portfolio</span>
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-700 max-w-2xl text-center mb-10 leading-relaxed">
+        Showcasing my certificates, projects, and professional experience with a focus on excellence and innovation.
+      </p>
+      <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+        <a href="#certificates" class="bg-primary hover:bg-yellow-500 text-secondary px-8 py-4 rounded-md font-medium transition transform hover:scale-105">
+          View Certificates
+        </a>
+        <a href="#projects" class="bg-secondary hover:bg-gray-800 text-light px-8 py-4 rounded-md font-medium transition transform hover:scale-105">
+          View Projects
+        </a>
+      </div>
+      
+      <div class="absolute bottom-10 scroll-indicator">
+        <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certificates Section -->
+  <section id="certificates" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="mb-16 text-center">
+        <h2 class="text-4xl font-bold mb-4 section-heading inline-block">
+          <span class="text-primary">Certificates</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mt-6">
+          A collection of professional certifications that demonstrate my expertise and commitment to continuous learning.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Certificate 1 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert1">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Deep Learning Specialization</h3>
+            <p class="text-gray-600 mb-4">Coursera | deeplearning.ai</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">January 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Certificate 2 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert2">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Machine Learning Engineer</h3>
+            <p class="text-gray-600 mb-4">Udacity</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">March 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Certificate 3 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert3">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">TensorFlow Developer</h3>
+            <p class="text-gray-600 mb-4">Google</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">May 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-12">
+        <button id="view-more-certs" class="border-2 border-secondary hover:bg-secondary hover:text-white text-secondary px-6 py-3 rounded-md font-medium transition inline-flex items-center">
+          View More Certificates
+          <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Hidden Certificates (shown when "View More" is clicked) -->
+      <div id="more-certificates" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Certificate 4 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert4">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AI for Medicine</h3>
+            <p class="text-gray-600 mb-4">Coursera | deeplearning.ai</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">August 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Certificate 5 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert5">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Full Stack Development</h3>
+            <p class="text-gray-600 mb-4">Udemy</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">October 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Certificate 6 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer certificate-card highlight-card" data-id="cert6">
+          <div class="h-52 bg-gray-50 flex items-center justify-center p-4">
+            <img src="certif.png" alt="Certificate" class="h-full w-full object-contain" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Cloud Computing</h3>
+            <p class="text-gray-600 mb-4">AWS</p>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-sm text-gray-500 font-medium">December 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6">
+      <div class="mb-16 text-center">
+        <h2 class="text-4xl font-bold mb-4 section-heading inline-block">
+          <span class="text-primary">Projects</span> & Experience
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mt-6">
+          A showcase of my professional projects and work experience, demonstrating my skills and expertise.
+        </p>
+      </div>
+      
+      <!-- Featured Project -->
+      <div class="mb-16">
+        <h3 class="text-2xl font-bold mb-8 inline-block">Featured Project</h3>
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer project-card highlight-card" data-id="proj1">
+          <div class="grid grid-cols-1 lg:grid-cols-2">
+            <div class="h-64 lg:h-auto bg-secondary flex items-center justify-center p-8">
+              <svg class="w-32 h-32 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-semibold mb-3">Neural Network Visualizer</h3>
+              <p class="text-gray-600 mb-6">An interactive tool for visualizing neural network architectures and training processes in real-time, making complex deep learning concepts more accessible.</p>
+              <div class="flex flex-wrap gap-2 mb-6">
+                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">PyTorch</span>
+                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">React</span>
+                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">D3.js</span>
+                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Flask</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500 font-medium">2023</span>
+                <span class="text-primary font-medium flex items-center">
+                  View Details
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Project 2 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer project-card highlight-card" data-id="proj2">
+          <div class="h-48 bg-secondary flex items-center justify-center">
+            <svg class="w-16 h-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AI-Powered Text Summarizer</h3>
+            <p class="text-gray-600 mb-4">A tool that uses advanced NLP techniques to generate concise summaries of long articles and documents.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Transformers</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Flask</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">BERT</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 font-medium">2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 3 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer project-card highlight-card" data-id="proj3">
+          <div class="h-48 bg-secondary flex items-center justify-center">
+            <svg class="w-16 h-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Emotion Recognition System</h3>
+            <p class="text-gray-600 mb-4">A computer vision application that detects and classifies human emotions from facial expressions in real-time.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">TensorFlow</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">OpenCV</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">CNN</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 font-medium">2022</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="text-2xl font-bold my-8 inline-block">Professional Experience</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Experience 1 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer project-card highlight-card" data-id="exp1">
+          <div class="h-48 bg-primary flex items-center justify-center">
+            <svg class="w-16 h-16 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AI Research Intern</h3>
+            <p class="text-gray-600 mb-4">Conducted research on improving neural network efficiency and reducing computational requirements.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Research</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Python</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">TensorFlow</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 font-medium">2023 - Present</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Experience 2 -->
+        <div class="bg-white border-2 border-gray-100 rounded-xl overflow-hidden card-hover cursor-pointer project-card highlight-card" data-id="exp2">
+          <div class="h-48 bg-primary flex items-center justify-center">
+            <svg class="w-16 h-16 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Machine Learning Engineer</h3>
+            <p class="text-gray-600 mb-4">Developed and deployed machine learning models for predictive analytics in healthcare.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">ML Ops</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">Python</span>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium badge">AWS</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 font-medium">2022 - 2023</span>
+              <span class="text-primary font-medium flex items-center">
+                View Details
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certificate Modals -->
+  <!-- Certificate 1 Modal -->
+  <div id="cert1-modal" class="modal">
+    <div class="modal-content">
+      <div class="flex justify-between items-start mb-6">
+        <h3 class="text-2xl font-bold">Deep Learning Specialization</h3>
+        <span class="close-modal text-3xl cursor-pointer hover:text-primary transition">&times;</span>
+      </div>
+      <div class="mb-8">
+        <img src="certif.png" alt="Certificate" class="w-full h-auto rounded-lg shadow-lg mb-4" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h4 class="text-lg font-semibold mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Certificate Details
+          </h4>
+          <div class="space-y-2 text-gray-700">
+            <p><span class="font-medium">Issuer:</span> Coursera | deeplearning.ai</p>
+            <p><span class="font-medium">Date Issued:</span> January 2023</p>
+            <p><span class="font-medium">Credential ID:</span> DLSP-2023-01-XYZ</p>
+            <p><span class="font-medium">Expiration:</span> No Expiration</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Skills Acquired
+          </h4>
+          <ul class="list-disc pl-5 text-gray-700 space-y-1">
+            <li>Neural Networks and Deep Learning</li>
+            <li>Improving Deep Neural Networks</li>
+            <li>Structuring Machine Learning Projects</li>
+            <li>Convolutional Neural Networks</li>
+            <li>Sequence Models</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <h4 class="text-lg font-semibold mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Description
+        </h4>
+        <p class="text-gray-700 leading-relaxed">
+          The Deep Learning Specialization is a foundational program that helps you understand the capabilities, challenges, and consequences of deep learning and prepare you to participate in the development of leading-edge AI technology. In this Specialization, you build and train neural network architectures such as Convolutional Neural Networks, Recurrent Neural Networks, LSTMs, Transformers, and learn how to make them better with strategies such as Dropout, BatchNorm, Xavier/He initialization, and more.
+        </p>
+      </div>
+      <div class="mt-8 flex justify-end">
+        <a href="#" class="bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">Verify Certificate</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 1 Modal -->
+  <div id="proj1-modal" class="modal">
+    <div class="modal-content">
+      <div class="flex justify-between items-start mb-6">
+        <h3 class="text-2xl font-bold">Neural Network Visualizer</h3>
+        <span class="close-modal text-3xl cursor-pointer hover:text-primary transition">&times;</span>
+      </div>
+      <div class="mb-8">
+        <div class="bg-gray-100 rounded-lg p-6 flex items-center justify-center h-64">
+          <svg class="w-32 h-32 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h4 class="text-lg font-semibold mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Project Details
+          </h4>
+          <div class="space-y-2 text-gray-700">
+            <p><span class="font-medium">Timeline:</span> Jan 2023 - Apr 2023</p>
+            <p><span class="font-medium">Role:</span> Lead Developer</p>
+            <p><span class="font-medium">Team Size:</span> 3 members</p>
+            <p><span class="font-medium">Status:</span> Completed</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Technologies Used
+          </h4>
+          <ul class="list-disc pl-5 text-gray-700 space-y-1">
+            <li>PyTorch for neural network implementation</li>
+            <li>React for frontend development</li>
+            <li>D3.js for interactive visualizations</li>
+            <li>Flask for backend API</li>
+            <li>Docker for containerization</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <h4 class="text-lg font-semibold mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Project Description
+        </h4>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The Neural Network Visualizer is an interactive web application that allows users to visualize the architecture and training process of neural networks in real-time. The tool provides intuitive visualizations of network layers, weights, activations, and gradients during training.
+        </p>
+        <p class="text-gray-700 leading-relaxed">
+          Key features include customizable network architectures, real-time training visualization, performance metrics tracking, and the ability to export trained models. The project aims to make neural networks more interpretable and accessible to researchers, students, and practitioners in the field of deep learning.
+        </p>
+      </div>
+      <div class="mt-8 flex justify-end space-x-4">
+        <a href="#" class="border-2 border-secondary hover:bg-secondary hover:text-white text-secondary px-6 py-3 rounded-md font-medium transition">View Demo</a>
+        <a href="#" class="bg-primary hover:bg-yellow-500 text-secondary px-6 py-3 rounded-md font-medium transition transform hover:scale-105 shadow-md">GitHub Repository</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-10 bg-secondary text-light">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="text-xl font-bold mb-6 md:mb-0">
+          <span class="text-primary">Portfolio</span>
+          <span class="bg-primary h-1.5 w-1.5 rounded-full inline-block ml-1"></span>
+        </div>
+        <div class="flex space-x-8 mb-6 md:mb-0">
+          <a href="#home" class="hover:text-primary transition">Home</a>
+          <a href="#certificates" class="hover:text-primary transition">Certificates</a>
+          <a href="#projects" class="hover:text-primary transition">Projects & Experience</a>
+        </div>
+        <div class="flex space-x-4">
+          <a href="#" class="bg-light/10 hover:bg-primary hover:text-secondary p-2 rounded-full transition">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0c-6.627 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.387.6.113.82-.261.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+            </svg>
+          </a>
+          <a href="#" class="bg-light/10 hover:bg-primary hover:text-secondary p-2 rounded-full transition">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
+            </svg>
+          </a>
+          <a href="#" class="bg-light/10 hover:bg-primary hover:text-secondary p-2 rounded-full transition">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-light/10 mt-8 pt-8 text-center">
+        <p class="text-gray-400">© 2025 Professional Portfolio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary hover:bg-yellow-500 text-secondary p-3 rounded-full shadow-lg transition opacity-0 invisible">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+    </svg>
+  </button>
+
+  <script>
+    // Navigation active state
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    window.addEventListener('scroll', () => {
+      let current = '';
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').substring(1) === current) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Navbar background change on scroll
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('py-3');
+        navbar.classList.remove('py-4');
+        navbar.classList.add('shadow-md');
+      } else {
+        navbar.classList.add('py-4');
+        navbar.classList.remove('py-3');
+        navbar.classList.remove('shadow-md');
+      }
+      
+      // Back to top button visibility
+      const backToTopButton = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopButton.classList.add('opacity-0', 'invisible');
+        backToTopButton.classList.remove('opacity-100', 'visible');
+      }
+    });
+    
+    // Back to top button functionality
+    document.getElementById('back-to-top').addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // View More Certificates button
+    document.getElementById('view-more-certs').addEventListener('click', function() {
+      const moreCertificates = document.getElementById('more-certificates');
+      const button = this;
+      
+      if (moreCertificates.classList.contains('hidden')) {
+        moreCertificates.classList.remove('hidden');
+        moreCertificates.classList.add('grid');
+        button.innerHTML = 'View Less <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>';
+      } else {
+        moreCertificates.classList.add('hidden');
+        moreCertificates.classList.remove('grid');
+        button.innerHTML = 'View More Certificates <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
+      }
+    });
+    
+    // Modal functionality
+    const certificateCards = document.querySelectorAll('.certificate-card');
+    const projectCards = document.querySelectorAll('.project-card');
+    const modals = document.querySelectorAll('.modal');
+    const closeButtons = document.querySelectorAll('.close-modal');
+    
+    // Open modal when clicking on a card
+    certificateCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const modalId = ${card.getAttribute('data-id')}-modal;
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.add('show');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    });
+    
+    projectCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const modalId = ${card.getAttribute('data-id')}-modal;
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.add('show');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    });
+    
+    // Close modal when clicking on close button
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const modal = button.closest('.modal');
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+      });
+    });
+    
+    // Close modal when clicking outside of modal content
+    window.addEventListener('click', (event) => {
+      modals.forEach(modal => {
+        if (event.target === modal) {
+          modal.classList.remove('show');
+          document.body.style.overflow = 'auto';
+        }
+      });
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        modals.forEach(modal => {
+          if (modal.classList.contains('show')) {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
